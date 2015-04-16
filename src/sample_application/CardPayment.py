@@ -1,0 +1,57 @@
+#!/usr/bin/python3
+'''
+Created on 1-Apr-2015
+
+@author: Asawari.Vaidya
+'''
+import cgitb
+cgitb.enable()
+import cgi
+from PythonNetBanxSDK.CardPayments.Authorization import Authorization
+from PythonNetBanxSDK.CardPayments.Card import Card
+from PythonNetBanxSDK.CardPayments.CardExpiry import CardExpiry
+from PythonNetBanxSDK.CardPayments.BillingDetails import BillingDetails
+from PythonNetBanxSDK.OptimalApiClient import OptimalApiClient
+from RandomTokenGenerator import RandomTokenGenerator
+from Config import Config
+
+form = cgi.FieldStorage()
+card_num = form.getvalue('cardNumber')
+
+optimal_obj = OptimalApiClient(Config.api_key, Config.api_password, Config.environment, Config.account_number)
+
+auth_obj = Authorization(None)
+card_obj = Card(None)
+cardExpiry_obj = CardExpiry(None)
+billing_obj = BillingDetails(None)
+		
+auth_obj.merchantRefNum(RandomTokenGenerator().generateToken())
+auth_obj.amount("100")
+auth_obj.settleWithAuth("false")
+
+#card_obj.cardNum("4530910000012345")		
+card_obj.cardNum(card_num)
+card_obj.cvv("123")
+auth_obj.card(card_obj)
+		
+cardExpiry_obj.month("2")
+cardExpiry_obj.year("2017")
+card_obj.cardExpiry(cardExpiry_obj)
+
+billing_obj.street("Carlos Pellegrini 551")
+billing_obj.city("Buenos Aires")
+billing_obj.state("Zulia")
+billing_obj.country("AR")
+billing_obj.zip("C1009ABK")
+auth_obj.billingDetails(billing_obj)
+
+response_object = optimal_obj.card_payments_service_handler().create_authorization(auth_obj)
+
+print ('Content-Type: text/html')
+print ()
+print ('<html>')
+print ('<head><title>Card Payments - Create Authorization</title></head>')
+print ('<body>')
+print (response_object.__dict__)
+print (response_object.error.__dict__)
+print ('</body></html>')
