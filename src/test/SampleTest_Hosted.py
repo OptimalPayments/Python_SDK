@@ -20,11 +20,6 @@ class SampleTest_Hosted(object):
     classdocs
     '''
 
-    # Static data
-#     _api_key = 'devcentre4633'
-#     _api_password = 'B-qa2-0-548ef2d3-302c0214197506e0c910879ea72df4afbe405489b8321cfc02142d3785fca2b1518415d7f1545310aa5fe74416af'
-#     _account_number = '89983467'
-
     _api_key = 'devcentre4628'
     _api_password = 'B-qa2-0-548ef25d-302b0213119f70d83213f828bc442dfd0af3280a7b48b1021400972746f9abe438554699c8fa3617063ca4c69a'
     _account_number = '89983472'
@@ -80,10 +75,56 @@ class SampleTest_Hosted(object):
                                                  
         print ("Create Order Response: ")
         print (response_object.__dict__)
-#         pprint (response_object.__dict__)
-#         pprint (response_object.profile.firstName)
-        return (response_object.__dict__)
 
+    def create_profile_with_order(self):
+        '''
+        Create Profile with Order
+        '''
+        order_obj = Order(None)
+        order_obj.merchantRefNum(str(RandomTokenGenerator().generateToken()))
+        order_obj.currencyCode("USD")
+        order_obj.totalAmount(1000)
+
+        eo_list = []
+        eo = ExtendedOptions(None)
+        eo.key("silentPost")
+        eo.value("true")
+        eo_list.append(eo.__dict__)
+        order_obj.extendedOptions(eo_list)
+
+        profile_obj = Profile(None)
+        profile_obj.merchantCustomerId(str(RandomTokenGenerator().generateToken()))
+        profile_obj.firstName("Jane")
+        profile_obj.lastName("Smythe")
+        order_obj.profile(profile_obj)
+
+        redirect_list = []
+        redirect1 = Redirect(None)
+        redirect1.rel("on_success")
+        redirect1.uri("https://api.netbanx.com/echo?payment=success")
+		
+        redirect2 = Redirect(None)
+        redirect2.rel("on_decline")
+        redirect2.uri("https://api.netbanx.com/echo?payment=failure")
+
+        redirect3 = Redirect(None)
+        redirect3.rel("on_error")
+        redirect3.uri("https://api.netbanx.com/echo?payment=error")
+
+        redirect_list.append(redirect1.__dict__)
+        redirect_list.append(redirect2.__dict__)
+        redirect_list.append(redirect3.__dict__)
+        order_obj.redirect(redirect_list)
+		
+        self._optimal_obj = OptimalApiClient(api_key=self._api_key,
+                                             api_password=self._api_password, env="TEST", 
+                                             account_number=self._account_number)
+        response_object = self._optimal_obj.hosted_payment_service_handler(
+                                            ).create_order(order_obj)    
+                                                 
+        print ("Create Order Response: ")
+        print (response_object.__dict__)
+		
 
     def silent_post(self):
         '''
@@ -137,9 +178,8 @@ class SampleTest_Hosted(object):
                                                  
         print ("Create Order Response: ")
         print (response_object.__dict__)
-#         pprint (response_object.__dict__)
-#         pprint (response_object.profile.firstName)
-        return (response_object.__dict__)       
+
+     
  
     def process_order_with_payment_token(self):
         '''
@@ -157,12 +197,12 @@ class SampleTest_Hosted(object):
         profile_obj.paymentToken("Pff1PwG5LFuiq5q")
         order_obj.profile(profile_obj)
         
-        eo_list = []
-        eo = ExtendedOptions(None)
-        eo.key("silentPost")
-        eo.value("true")
-        eo_list.append(eo)
-        order_obj.extendedOptions(eo_list)
+#        eo_list = []
+#        eo = ExtendedOptions(None)
+#        eo.key("silentPost")
+#        eo.value("true")
+#        eo_list.append(eo)
+#        order_obj.extendedOptions(eo_list)
         
         self._optimal_obj = OptimalApiClient(api_key=self._api_key,
                                              api_password=self._api_password, 
@@ -176,9 +216,6 @@ class SampleTest_Hosted(object):
                                                  
         print ("Create Order Response: ")
         print (response_object)
-#         print (response_object.link[0].rel)
-#         print (response_object.link[0].uri)
-        return (response_object.__dict__)
     
 
     def process_order_with_profile_id(self):
@@ -202,8 +239,8 @@ class SampleTest_Hosted(object):
         response_object = self._optimal_obj.hosted_payment_service_handler(
                                             ).create_order(order_obj)    
                                                  
-        pprint ("Create Order Response: ")
-        pprint (response_object)     
+        print ("Create Order Response: ")
+        print (response_object)     
         print (response_object.profile.firstName)
 
 
@@ -217,8 +254,8 @@ class SampleTest_Hosted(object):
 
         response_object = self.optimalApiCli.hosted_payment_service_handler().create_order(order_obj)
         
-        pprint ("Process order with hosted page: ")
-        pprint(response_object.__dict__)
+        print ("Process order with hosted page: ")
+        print(response_object.__dict__)
 
 
     def get_order(self):
@@ -237,16 +274,36 @@ class SampleTest_Hosted(object):
         response_object = self._optimal_obj.hosted_payment_service_handler(
                                             ).get_order(order_obj)    
                    
-        pprint ("Create Order Response: ")
+        print ("Create Order Response: ")
         print (response_object.__dict__)    
-#         print (response_object.error.code)
-#         print (response_object.error.message)
-        #print ("Status zala ", response_object.transaction.status)
+
         for c in range(0, response_object.link.__len__()):
             print ('link-rel: ', response_object.link[c].rel)
             print ('link-uri: ', response_object.link[c].uri)
 
 
+    def get_order_report(self):
+        '''
+        Get Order Report
+        '''
+        order_obj = Order(None)
+		
+        self._optimal_obj = OptimalApiClient(api_key=self._api_key,
+                                             api_password=self._api_password, env="TEST", 
+                                             account_number=self._account_number)
+        response_object = self._optimal_obj.hosted_payment_service_handler(
+                                            ).get_order_report(order_obj, "5", "0")	
+		
+        print ("Response Object : ", response_object)
+        print ("Length : ", response_object.__len__())
+        for c in range(0, response_object.__len__()):
+            print ('Records : ', c)
+            print ('Order Id : ', response_object[c].id)
+            print ('Merchant Reference Number :', response_object[c].merchantRefNum)
+            print ('Currency Code : ', response_object[c].currencyCode)
+            print ('Total Amount : ', response_object[c].totalAmount)
+
+			
     def update_order(self):
         '''
         Update Order
@@ -269,9 +326,9 @@ class SampleTest_Hosted(object):
         response_object = self._optimal_obj.hosted_payment_service_handler(
                                             ).update_order(order_obj)    
         
-        pprint ("Create Order Response: ")
-        pprint (response_object)
-        #print ("Status zala ", response_object.transaction.status)
+        print ("Create Order Response: ")
+        print (response_object)
+
 
     def update_rebill_order(self):
         '''
@@ -295,9 +352,9 @@ class SampleTest_Hosted(object):
         response_object = self._optimal_obj.hosted_payment_service_handler(
                                             ).update_order(order_obj)    
         
-        pprint ("Create Order Response: ")
-        pprint (response_object)
-        #print ("Status zala ", response_object.transaction.status)
+        print ("Create Order Response: ")
+        print (response_object)
+
 
     def cancel_order(self):
         '''
@@ -316,8 +373,8 @@ class SampleTest_Hosted(object):
         response_object = self._optimal_obj.hosted_payment_service_handler(
                                             ).cancel_order(order_obj)    
          
-        pprint ("Create Order Response: ")
-        pprint (response_object)
+        print ("Create Order Response: ")
+        print (response_object)
  
  
     def settle_order(self):
@@ -338,8 +395,8 @@ class SampleTest_Hosted(object):
         response_object = self._optimal_obj.hosted_payment_service_handler(
                                             ).settle_order(settle_obj)    
          
-        pprint ("Create Order Response: ")
-        pprint (response_object)
+        print ("Create Order Response: ")
+        print (response_object)
  
  
  
@@ -361,8 +418,8 @@ class SampleTest_Hosted(object):
         response_object = self._optimal_obj.hosted_payment_service_handler(
                                             ).refund_order(refund_obj)    
          
-        pprint ("Response: ")
-        pprint (response_object)
+        print ("Response: ")
+        print (response_object)
   
 
     def process_rebill_using_id(self):
@@ -379,7 +436,7 @@ class SampleTest_Hosted(object):
         response_object = self._optimal_obj.hosted_payment_service_handler(
                                             ).process_rebill_using_order_id(order_obj)    
          
-        pprint ("Response: ")
+        print ("Response: ")
         print (response_object.__dict__)
         
 
@@ -398,8 +455,8 @@ class SampleTest_Hosted(object):
         response_object = self._optimal_obj.hosted_payment_service_handler(
                                             ).process_rebill_using_order_id(order_obj)    
          
-        pprint ("Response: ")
-        pprint (response_object)
+        print ("Response: ")
+        print (response_object)
 
     def process_rebill_using_Profile(self):
         order_obj = Order(None)
@@ -426,14 +483,14 @@ class SampleTest_Hosted(object):
         response_object = self._optimal_obj.hosted_payment_service_handler(
                                             ).process_rebill_using_profile_id(order_obj)    
          
-        pprint ("Response: ")
-        pprint (response_object)
+        print ("Response: ")
+        print (response_object)
 
-o = SampleTest_Hosted().create_order()
+#o = SampleTest_Hosted().create_order()
 #o = SampleTest_Hosted().process_rebill_using_Profile() 
 #o = SampleTest_Hosted().process_order_with_payment_token()
 #o = SampleTest_Hosted().get_order()
-#o = SampleTest_Hosted().cancel_order()
+o = SampleTest_Hosted().get_order_report()
 #o = SampleTest_Hosted().update_order()
 #o = SampleTest_Hosted().settle_order()
 #o = SampleTest_Hosted().refund_order()

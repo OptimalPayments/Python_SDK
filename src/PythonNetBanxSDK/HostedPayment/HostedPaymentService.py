@@ -306,8 +306,16 @@ class HostedPaymentService(object):
         response = self.optimal_object.process_request(req_method="GET", 
                                                        url=FULL_URL, 
                                                        data=None)
-        return (self._process_response(response, HostedPayment.Order.Order))
-    
+        order_list = []
+        if (response["records"].__len__() == 0):
+            return (order_list)
+        else:
+            for count in range(0,response["records"].__len__()):
+                order_list.append(
+                            self._process_response(response["records"][count],
+                            HostedPayment.Order.Order))
+            return (order_list)
+
     
     '''
     Resend callback

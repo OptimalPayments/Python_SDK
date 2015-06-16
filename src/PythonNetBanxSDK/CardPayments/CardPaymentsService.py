@@ -13,7 +13,7 @@ class CardPaymentsService(object):
     '''
 
     # Define URL paths for Authorization, Authorization Reversal, 
-    # Refund, Settlement
+    # Refund, Settlement, Verification
     _MONITOR_PATH = '/cardpayments/monitor'
     _URI = '/cardpayments/v1'
     _AUTH_PATH = '/auths'
@@ -23,11 +23,11 @@ class CardPaymentsService(object):
     _VERIFY_PATH = '/verifications'
     _URI_SEPARATOR = '/'
     
-    _MERCHANT_REF_NUM = "merchantRefNum"
-    _LIMIT = "limit"
-    _OFFSET = "offset"
-    _START_DATE = "startDate"
-    _END_DATE = "endDate"
+    _MERCHANT_REF_NUM = "?merchantRefNum="
+    _LIMIT = "&limit="
+    _OFFSET = "&offset="
+    _START_DATE = "&startDate="
+    _END_DATE = "&endDate="
     _ACCOUNTS="/accounts/"
    
     def __init__(self, optimal_object):
@@ -668,3 +668,98 @@ class CardPaymentsService(object):
         return (self._process_response(
                                     response,
                                     CardPayments.Refund.Refund))
+
+    '''
+    Verify a Card
+
+    @param: Verification Object
+    @return: Verification Object
+    @raise: IOException
+    @raise: OptimalException
+    '''
+    def verify_card(self, data):
+        FULL_URL = self._prepare_uri(self._ACCOUNTS + \
+		                             self._account_no + \
+                                     self._VERIFY_PATH)
+        # print ("Communicating to ", FULL_URL)
+        response = self.optimal_object.process_request(
+                                    req_method="POST",
+                                    url=FULL_URL,
+                                    data=data)
+        return (self._process_response(
+                                    response,
+                                    CardPayments.Verification.Verification))
+
+    '''
+    Lookup a Verification using a Verification Id
+
+    @param: Verification Id
+    @return: Verification Object
+    @raise: IOException
+    @raise: OptimalException
+    '''
+    def lookup_verification_using_id(self, data):
+        verification_id = data.id
+        if inspect.ismethod(verification_id):
+            err_msg = "Verification Id not available"
+            return (self.prepare_error(
+                                    CardPayments.Verification.Verification, 
+                                    "400", 
+                                    err_msg))
+        del data.id
+
+        FULL_URL = self._prepare_uri(self._ACCOUNTS + \
+                                     self._account_no + \
+                                     self._VERIFY_PATH +\
+                                     self._URI_SEPARATOR +\
+                                     verification_id)
+        # print ("Communicating to ", FULL_URL)
+        response = self.optimal_object.process_request(
+                                    req_method="GET",
+                                    url=FULL_URL,
+                                    data=data)
+        return (self._process_response(
+                                    response,
+                                    CardPayments.Verification.Verification))
+
+    '''
+    Lookup a Verification using a Merchant Reference Number
+
+    @param: Merchant Reference Number
+    @return: Verification Object
+    @raise: IOException
+    @raise: OptimalException
+    '''
+    def lookup_verification_using_merchant_ref_num(self, data, limit):
+        merchant_ref_no = data.merchantRefNum
+        if inspect.ismethod(merchant_ref_no):
+            err_msg = "Merchant Reference Number not available"
+            return (self.prepare_error(
+                                    CardPayments.Verification.Verification, 
+                                    "400", 
+                                    err_msg))
+        del data.merchantRefNum
+        if limit is None:
+            limit = '10'
+        
+        FULL_URL = self._prepare_uri(self._ACCOUNTS + \
+                                     self._account_no +\
+                                     self._VERIFY_PATH + \
+                                     self._MERCHANT_REF_NUM + \
+                                     merchant_ref_no + \
+                                     self._LIMIT + \
+                                     limit)
+        # print ("Communicating to ", FULL_URL)
+        response = self.optimal_object.process_request(
+                                    req_method="GET",
+                                    url=FULL_URL,
+                                    data=data)
+        verification_list = []
+        if (response["verifications"].__len__() == 0):
+            return (verification_list)
+        else:
+            for count in range(0,response["verifications"].__len__()):
+                verification_list.append(
+                            self._process_response(response["verifications"][count],
+                            CardPayments.Verification.Verification))
+            return (verification_list)

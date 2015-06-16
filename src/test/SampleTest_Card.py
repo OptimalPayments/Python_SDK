@@ -5,6 +5,10 @@ Created on 20-Feb-2015
 '''
 from PythonNetBanxSDK.OptimalApiClient import OptimalApiClient
 from PythonNetBanxSDK.CardPayments.Authorization import Authorization
+from PythonNetBanxSDK.CardPayments.AuthorizationReversal import AuthorizationReversal
+from PythonNetBanxSDK.CardPayments.Authentication import Authentication
+from PythonNetBanxSDK.CardPayments.Verification import Verification
+from PythonNetBanxSDK.CustomerVault.Profile import Profile
 from PythonNetBanxSDK.CardPayments.Card import Card
 from PythonNetBanxSDK.CardPayments.CardExpiry import CardExpiry
 from PythonNetBanxSDK.CardPayments.BillingDetails import BillingDetails
@@ -44,64 +48,19 @@ class SampleTest_Card(object):
         print (response_object.__dict__)  
 
         
-    def create_authorization(self):
+    def create_authorization_with_payment_token(self):
         '''
         Create Authorization with payment token
         '''     
         auth_obj = Authorization(None)
         auth_obj.merchantRefNum(RandomTokenGenerator().generateToken())
-        auth_obj.amount("1000")
+        auth_obj.amount("1200")
           
         card_obj = Card(None)
-        card_obj.paymentToken("Ca7aO2wuj6xxJVJ")
+        card_obj.paymentToken("C7dEdq9Mcz4nwyy")
           
         auth_obj.card(card_obj)
         
-		'''
-		auth_obj = Authorization(None)
-		card_obj = Card(None)
-		cardExpiry = CardExpiry(None)
-		billing_obj = BillingDetails(None)
-		
-		auth_obj.merchantRefNum(RandomTokenGenerator().generateToken())
-		auth_obj.amount("4")
-		auth_obj.settleWithAuth("True")
-		
-		card_obj.cardNum("4111111111111111")
-        card_obj.cvv("123")
-		auth_obj.card(card_obj)
-		
-		cardExpiry.month("2")
-		cardExpiry.year("2017")
-		card_obj.cardExpiry(cardExpiry_obj)
-		
-		billing_obj.zip("M5H 2N2")
-		auth_obj.billingDetails(billing_obj)
-		'''
-		
-#         auth_Obj = Authorization(None)
-#         auth_Obj.merchantRefNum(RandomTokenGenerator().generateToken())
-#         auth_Obj.amount("1031")
-# 
-#         card_obj = Card(None)
-#         card_obj.cardNum("4510150000000321")
-#         card_obj.type("VI")
-#         card_obj.lastDigits("0321")  
-#         card_obj.cvv("123")
-#         cardExpiry_obj = CardExpiry(None)
-#         print ("type of card expiry 1: ", type(cardExpiry_obj))
-#         cardExpiry_obj.month("06")
-#         cardExpiry_obj.year("2018")
-#         print ("type of card expiry 2: ", type(cardExpiry_obj))
-#         card_obj.cardExpiry(cardExpiry_obj)
-#         print ("type of card expiry 3: ", type(cardExpiry_obj))  
-#         auth_Obj.card(card_obj)
-#         print ("type of card: ", type(card_obj))
-#         print ("type of card expiry 4: ", type(cardExpiry_obj))
-#         
-#         billing_obj = BillingDetails(None)
-#         billing_obj.zip("C1009ABK")
-#         auth_Obj.billingDetails(billing_obj)
 
         self._optimal_obj = OptimalApiClient(self._api_key,
                                              self._api_password, 
@@ -113,10 +72,196 @@ class SampleTest_Card(object):
         print ("Complete Response : ")
         print (response_object.__dict__)
         print ("Card ID: ", response_object.card.__dict__)
-        return (response_object.__dict__)
-                             
 
 
+    def create_complex_authorization(self):
+        '''
+        Create Complex Authorization
+        '''
+        auth_obj = Authorization(None)
+        authentication_obj = Authentication(None)
+        card_obj = Card(None)
+        cardExpiry_obj = CardExpiry(None)
+        billing_obj = BillingDetails(None)
+        shipping_obj = ShippingDetails(None)
+
+        auth_obj.merchantRefNum(RandomTokenGenerator().generateToken())
+        auth_obj.amount("5")
+        auth_obj.settleWithAuth("false")
+        auth_obj.customerIp("204.91.0.12")
+
+        card_obj.cardNum("4530910000012345")
+        card_obj.cvv("123")
+        auth_obj.card(card_obj)
+
+        cardExpiry_obj.month("4")
+        cardExpiry_obj.year("2017")
+        card_obj.cardExpiry(cardExpiry_obj)
+
+        authentication_obj.eci("5")
+        authentication_obj.cavv("AAABCIEjYgAAAAAAlCNiENiWiV+=")
+        authentication_obj.xid("OU9rcTRCY1VJTFlDWTFESXFtTHU=")
+        authentication_obj.threeDEnrollment("Y")
+        authentication_obj.threeDResult("Y")
+        authentication_obj.signatureStatus("Y")
+        auth_obj.authentication(authentication_obj)
+
+        billing_obj.street("100 Queen Street West")
+        billing_obj.city("Toronto")
+        billing_obj.state("ON")
+        billing_obj.country("CA")
+        billing_obj.zip("M5H 2N2")
+        auth_obj.billingDetails(billing_obj)
+
+        shipping_obj.carrier("FEX")
+        shipping_obj.shipMethod("C")
+        shipping_obj.street("100 Queen Street West")
+        shipping_obj.city("Toronto")
+        shipping_obj.state("ON")
+        shipping_obj.country("CA")
+        shipping_obj.zip("M5H 2N2")
+        auth_obj.shippingDetails(shipping_obj)
+
+        self._optimal_obj = OptimalApiClient(self._api_key,
+                                             self._api_password,
+                                             "TEST",
+                                             self._account_number)
+        response_object = self._optimal_obj.card_payments_service_handler(
+                                            ).create_authorization(auth_obj)
+
+        print ("Complete Response : ")
+        print (response_object.__dict__)
+
+
+    def create_authorization_with_card(self):
+        '''
+        Create Authorization with payment token
+        '''     
+
+        auth_obj = Authorization(None)
+        card_obj = Card(None)
+        cardExpiry_obj = CardExpiry(None)
+        billing_obj = BillingDetails(None)
+		
+        auth_obj.merchantRefNum(RandomTokenGenerator().generateToken())
+        auth_obj.amount("1400")
+        auth_obj.settleWithAuth("false")
+		
+        card_obj.cardNum("4530910000012345")
+        card_obj.cvv("123")
+        auth_obj.card(card_obj)
+		
+        cardExpiry_obj.month("2")
+        cardExpiry_obj.year("2017")
+        card_obj.cardExpiry(cardExpiry_obj)
+		
+        billing_obj.zip("M5H 2N2")
+        auth_obj.billingDetails(billing_obj)
+	
+
+        self._optimal_obj = OptimalApiClient(self._api_key,
+                                             self._api_password, 
+                                             "TEST", 
+                                             self._account_number)
+        response_object = self._optimal_obj.card_payments_service_handler(
+                                            ).create_authorization(auth_obj)
+                                            
+        print ("Complete Response : ")
+        print (response_object.__dict__)
+        print ("Card ID: ", response_object.card.__dict__)
+		
+    def payment_process_with_card_settle_with_auth_true(self):
+        '''
+        Process a card purchase (settleWithAuth=true)
+        '''     
+
+        auth_obj = Authorization(None)
+        card_obj = Card(None)
+        cardExpiry_obj = CardExpiry(None)
+        billing_obj = BillingDetails(None)
+
+        auth_obj.merchantRefNum(RandomTokenGenerator().generateToken())
+        auth_obj.amount("4")
+        auth_obj.settleWithAuth("true")
+
+        card_obj.cardNum("4530910000012345")
+        card_obj.cvv("123")
+        auth_obj.card(card_obj)
+
+        cardExpiry_obj.month("2")
+        cardExpiry_obj.year("2017")
+        card_obj.cardExpiry(cardExpiry_obj)
+
+        billing_obj.zip("M5H 2N2")
+        auth_obj.billingDetails(billing_obj)
+
+        self._optimal_obj = OptimalApiClient(self._api_key,
+                                             self._api_password, 
+                                             "TEST", 
+                                             self._account_number)
+        response_object = self._optimal_obj.card_payments_service_handler(
+                                            ).create_authorization(auth_obj)
+
+        print ("Complete Response : ")
+        print (response_object.__dict__)
+        print ("Card ID: ", response_object.card.__dict__)
+        print("error code: ", response_object.error.code)
+        print("error message: ", response_object.error.message)
+        
+
+    def partial_authorization_reversal(self):
+        '''
+        Partial authorization reversal
+        '''
+        auth_obj = Authorization(None)
+        auth_obj.merchantRefNum(RandomTokenGenerator().generateToken())
+        auth_obj.amount(555)
+        auth_obj.settleWithAuth("false")
+
+        card_obj = Card(None)
+        card_obj.cardNum("4530910000012345")
+        card_obj.cvv("123")
+        auth_obj.card(card_obj)
+
+        cardExpiry_obj = CardExpiry(None)
+        cardExpiry_obj.month("1")
+        cardExpiry_obj.year("2017")
+        card_obj.cardExpiry(cardExpiry_obj)
+
+        billing_obj = BillingDetails(None)
+        billing_obj.zip("M5H 2 N2")
+
+        self._optimal_obj = OptimalApiClient(self._api_key,
+                                             self._api_password, 
+                                             "TEST", 
+                                             self._account_number)
+        response_object = self._optimal_obj.card_payments_service_handler(
+                                            ).create_authorization(auth_obj)
+
+        print ("Authorization Response : ", response_object.__dict__)
+        auth_id = response_object.id
+        print ("Authorization Id : ", auth_id)
+
+        auth_rev =  AuthorizationReversal(None)
+        auth_rev.merchantRefNum(RandomTokenGenerator().generateToken())
+        auth_rev.amount(222)
+
+        auth_obj2 = Authorization(None)
+        auth_obj2.id(auth_id)
+        auth_rev.authorization(auth_obj2)
+
+        self._optimal_obj = OptimalApiClient(self._api_key,
+                                             self._api_password, 
+                                             "TEST", 
+                                             self._account_number)
+        response_object = self._optimal_obj.card_payments_service_handler(
+                                            ).reverse_authorization_using_merchant_no(auth_rev)
+
+        print ("Complete Response : ")
+        print (response_object.__dict__)
+
+		
+		
     def lookup_authorization_with_id(self):
         '''
         Lookup Authorization with Id
@@ -191,7 +336,133 @@ class SampleTest_Card(object):
                                             
         print ("Complete Response : ")
         print (response_object.__dict__)
+
+    def verify_card_billing_details(self):
+        '''
+        Sample of verifying a card and billing details
+        '''
+        verify_obj = Verification(None)
+        card_obj = Card(None)
+        card_exp_obj = CardExpiry(None)
+        billing_obj = BillingDetails(None)
+        profile_obj = Profile(None)
+
+        verify_obj.merchantRefNum("4lnvozq01d1pbkr0")
+        #verify_obj.customerIp("204.91.0.12")
+        #verify_obj.description("This is  a test transaction")
+
+        #profile_obj.firstName("John")
+        #profile_obj.lastName("Smith")
+        #profile_obj.email("john.smith@somedomain.com")
+        #verify_obj.profile(profile_obj)
+
+        card_obj.cardNum("4530910000012345")
+        card_obj.cvv("123")
+        verify_obj.card(card_obj)
+
+        card_exp_obj.month("02")
+        card_exp_obj.year("2017")
+        card_obj.cardExpiry(card_exp_obj)
+
+        #billing_obj.street("100 Queen Street West")
+        #billing_obj.city("Toronto")
+        #billing_obj.state("ON")
+        #billing_obj.country("CA")
+        billing_obj.zip("M5H 2N2")
+        verify_obj.billingDetails(billing_obj)
+
+        self._optimal_obj = OptimalApiClient(self._api_key,
+                                             self._api_password, 
+                                             "TEST", 
+                                             self._account_number)
+        response_object = self._optimal_obj.card_payments_service_handler(
+                                            ).verify_card(verify_obj)
+
+        print ("Complete Response : ")
+        print (response_object.__dict__)
+
+    def verify_card_using_payment_token(self):
+        '''
+        Sample of verifying a card using payment token
+        '''
+        verify_obj = Verification(None)
+        card_obj = Card(None)
+        card_exp_obj = CardExpiry(None)
+        billing_obj = BillingDetails(None)
+        profile_obj = Profile(None)
+        shipping_obj = ShippingDetails(None)
+
+        verify_obj.merchantRefNum("rp12jb19igryjqff")
+        card_obj.paymentToken("C7dEdq9Mcz4nwyy")
+        card_obj.cvv("123")
+        verify_obj.card(card_obj)
+
+        shipping_obj.carrier("FEX")
+        shipping_obj.shipMethod("C")
+        shipping_obj.street("100 Queen Street West")
+        shipping_obj.city("Toronto")
+        shipping_obj.state("ON")
+        shipping_obj.country("CA")
+        shipping_obj.zip("M5H 2N2")
+        verify_obj.shippingDetails(shipping_obj)
+
+        #card_exp_obj.month("09")
+        #card_exp_obj.year("2019")
+        #card_obj.cardExpiry(card_exp_obj)
+
+        #billing_obj.street("100 Queen Street West")
+        #billing_obj.city("Toronto")
+        #billing_obj.state("ON")
+        #billing_obj.country("CA")
+        #billing_obj.zip("M5H 2N2")
+        #verify_obj.billingDetails(billing_obj)
+
+        self._optimal_obj = OptimalApiClient(self._api_key,
+                                             self._api_password, 
+                                             "TEST", 
+                                             self._account_number)
+        response_object = self._optimal_obj.card_payments_service_handler(
+                                            ).verify_card(verify_obj)
+
+        print ("Complete Response : ")
+        print (response_object.__dict__)
+
+    def lookup_verification_using_id(self):
+        '''
+        dd655ad9-2ebe-4178-9b3f-c88707a193f3
+        '''
+        verify_obj = Verification(None)
+        verify_obj.id("dd655ad9-2ebe-4178-9b3f-c88707a193f3")
+
+        self._optimal_obj = OptimalApiClient(self._api_key,
+                                             self._api_password, 
+                                             "TEST", 
+                                             self._account_number)
+        response_object = self._optimal_obj.card_payments_service_handler(
+                                            ).lookup_verification_using_id(verify_obj)
                                             
+        print ("Complete Response : ")
+        print (response_object.__dict__)
+
+    def lookup_verification_using_merchant_ref_num(self):
+        '''
+        4lnvozq01d1pbkr0
+        '''
+        verify_obj = Verification(None)
+        verify_obj.merchantRefNum("4lnvozq01d1pbkr0")
+
+        self._optimal_obj = OptimalApiClient(self._api_key,
+                                             self._api_password, 
+                                             "TEST", 
+                                             self._account_number)
+        response_object = self._optimal_obj.card_payments_service_handler(
+                                            ).lookup_verification_using_merchant_ref_num(verify_obj, "2")
+                                            
+        print ("Complete Response : ")
+        for c in range(0, response_object.__len__()):
+            print ('Records : ', c)
+            print ('Verifications : ', response_object[c].__dict__)
+
 
     def create_transaction_test(self):
         '''
@@ -239,9 +510,8 @@ class SampleTest_Card(object):
         print (response_object.__dict__)        
 
 
-
 # Call Object
-o = SampleTest_Card().card_payments_monitor()
+o = SampleTest_Card().verify_card_using_payment_token()
 
 
         

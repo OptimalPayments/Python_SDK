@@ -54,25 +54,15 @@ class SampleTest_Customer(object):
         profile_obj.locale("en_US")
         profile_obj.firstName("John")
         profile_obj.lastName("Smith")
-        profile_obj.email("1john.@smith@somedomain.com")
+        profile_obj.email("john.smith@somedomain.com")
         profile_obj.phone("713-444-5555")
            
         response_object = self.optimal_obj.customer_vault_service_handler(
                                             ).create_profile(profile_obj)
         
         print ("response object : ")
-        print (response_object.__dict__)                                           
-
-#         if 'error' in response_object:
-#             print ("hello")
-#         else:
-#             print ("bye")
-#         if response_object.error is not None:
-#             print ("Error Code: ", response_object.error.code)
-#             print ("Error Message: ", response_object.error.message)
-#         else:
-#             print ("Response Id: ", response_object.id)
-        return (response_object.__dict__)    
+        print (response_object.__dict__)
+        print (response_object.error.__dict__)		
             
             
     '''
@@ -80,12 +70,14 @@ class SampleTest_Customer(object):
     '''
     def lookup_customer_profile(self):
         profile_obj = Profile(None)
-        profile_obj.id("d1ecd379-58d3-4850-abce-744efb1eea91")
+        #profile_obj.id("d1ecd379-58d3-4850-abce-744efb1eea91")
         #profile_obj.id("f7db7ffe-87ab-4df9-8f04-0d405128473f")
         #profile_obj.id("f920d2a3-6582-4cc2-acc6-bdf7cfa626a3")
-
-        response_object = self.optimal_obj.customer_vault_service_handler(
-                                                ).lookup_profile(profile_obj)
+		#f25a445d-395d-43dd-bd8d-f82cbe46dd40 - android
+		#1df156a3-d977-409a-9a4a-3bfb405e88a7
+        profile_obj.id("1df156a3-d977-409a-9a4a-3bfb405e88a7")
+     
+        response_object = self.optimal_obj.customer_vault_service_handler().lookup_profile(profile_obj)
         print ("response object : ")
         print (response_object.__dict__)
         print (response_object)
@@ -95,7 +87,7 @@ class SampleTest_Customer(object):
         else:
             print (response_object.id)
         
-        return (response_object.__dict__)
+
     
     
     def lookup_customer_profile_subcomponents(self):
@@ -105,8 +97,9 @@ class SampleTest_Customer(object):
         is_addresses = True
         is_cards = True
         profile_obj = Profile(None)
-        profile_obj.id("f920d2a3-6582-4cc2-acc6-bdf7cfa626a3")
-        
+        #profile_obj.id("f920d2a3-6582-4cc2-acc6-bdf7cfa626a3")
+        profile_obj.id("f25a445d-395d-43dd-bd8d-f82cbe46dd40")
+		
         response_object = self.optimal_obj.customer_vault_service_handler(
                                             ).lookup_profile_subcomponents(
                                             profile_obj, 
@@ -115,14 +108,15 @@ class SampleTest_Customer(object):
 
         print ("Response : ")
         print (response_object.__dict__)
-        print ("Addresses:")
-        for c in range(0, response_object.addresses.__len__()):
-            print (response_object.addresses[c].id)
+        #print ("Addresses:")
+        #for c in range(0, response_object.addresses.__len__()):
+        #    print (response_object.addresses[c].id)
         print ("Cards:")
         for c in range(0, response_object.cards.__len__()):
             print (response_object.cards[c].id)
             print (response_object.cards[c].cardExpiry.month)
-        return (response_object.__dict__)
+            print (response_object.cards[c].paymentToken)
+
     
             
     def update_customer_profile(self):
@@ -194,7 +188,7 @@ class SampleTest_Customer(object):
         address_obj.recipientName("Jane Doe")
             
         profile_obj = Profile(None)
-        profile_obj.id("0dcdc277-c024-4cd4-b7c4-1a43fa733c8f")
+        profile_obj.id("590f11a7-063a-48e6-a742-f612cd777c21")
         address_obj.profile(profile_obj)
     
         response_object = self.optimal_obj.customer_vault_service_handler(
@@ -202,7 +196,7 @@ class SampleTest_Customer(object):
     
         print ("Respone Object : ")
         print (response_object.__dict__)    
-        return (response_object.__dict__)
+
 
 
     def lookup_address(self):
@@ -226,7 +220,7 @@ class SampleTest_Customer(object):
             print (response_object.error.message)
         else:
             print (response_object.id)
-        return (response_object.__dict__)
+
     
     
     def update_address(self):
@@ -252,7 +246,7 @@ class SampleTest_Customer(object):
                                             ).update_address(address_obj)
         print ("Respone Object : ")
         print (response_object.__dict__)  
-        return (response_object.__dict__)
+
 
 
     def delete_address(self):
@@ -270,7 +264,7 @@ class SampleTest_Customer(object):
                                             ).delete_address(address_obj)
         print ("Respone Object : ")
         print (response_object.__dict__)  
-        return (response_object.__dict__)    
+   
 
 
     def create_card(self):
@@ -280,14 +274,18 @@ class SampleTest_Customer(object):
         card_obj = Card(None)
         card_obj.nickName("John's corporate Visa")
         card_obj.holderName("MR. JOHN SMITH")
-        card_obj.cardNum("4530910000012345")
-        #card_obj.billingAddressId("b592acde-9462-4f59-abe7-d2c18d8402ce")
+        #6759950000000162
+		#4917480000000008
+		#4530910000012345
+        card_obj.cardNum("4510150000000321")
+        card_obj.billingAddressId("b25b4c96-3524-49ef-aa4a-d555bbac7a3b")
         card_obj.defaultCardIndicator("true")
         card_exp_obj = CardExpiry(None)
         card_exp_obj.month("12")
         card_exp_obj.year("2019")
         profile_obj = Profile(None)
-        profile_obj.id("b592acde-9462-4f59-abe7-d2c18d8402ce")
+        #rofile_obj.id("f25a445d-395d-43dd-bd8d-f82cbe46dd40")
+        profile_obj.id("590f11a7-063a-48e6-a742-f612cd777c21")
         card_obj.profile(profile_obj)
         card_obj.cardExpiry(card_exp_obj)
 
@@ -296,7 +294,7 @@ class SampleTest_Customer(object):
 
         print ("Response Values : ")
         print (response_object.__dict__)
-        return (response_object.__dict__)
+
 
 
     def lookup_card(self):
@@ -361,5 +359,8 @@ class SampleTest_Customer(object):
    
 # Call Object
 #o = SampleTest_Customer().customer_vault_monitor()
-o = SampleTest_Customer().create_customer_profile()
+#o = SampleTest_Customer().create_customer_profile()
+#o = SampleTest_Customer().lookup_customer_profile()
+#o = SampleTest_Customer().lookup_customer_profile_subcomponents()
+o = SampleTest_Customer().create_card()
         
