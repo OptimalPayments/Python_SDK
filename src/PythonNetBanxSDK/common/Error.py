@@ -59,8 +59,16 @@ class Error(DomainObject):
     Property Field Errors
     '''   
     def fieldErrors(self, field_errors):
-        fe = FieldErrors(field_errors)
-        self.__dict__['fieldErrors'] = fe
+        if isinstance(field_errors, FieldErrors):
+            addr = FieldErrors(field_errors.__dict__)
+            self.__dict__['fieldErrors'] = addr.__dict__
+        else:
+            for count in range(0, field_errors.__len__()):
+                addr_obj = FieldErrors(field_errors[count])
+                self.__dict__.setdefault('fieldErrors', []).append(addr_obj) 
+
+        #fe = FieldErrors(field_errors)
+        #self.__dict__['fieldErrors'] = fe
         
     '''
     Property Details

@@ -85,36 +85,11 @@ class SampleTest_Hosted(object):
         order_obj.currencyCode("USD")
         order_obj.totalAmount(1000)
 
-        eo_list = []
-        eo = ExtendedOptions(None)
-        eo.key("silentPost")
-        eo.value("true")
-        eo_list.append(eo.__dict__)
-        order_obj.extendedOptions(eo_list)
-
         profile_obj = Profile(None)
         profile_obj.merchantCustomerId(str(RandomTokenGenerator().generateToken()))
         profile_obj.firstName("Jane")
         profile_obj.lastName("Smythe")
         order_obj.profile(profile_obj)
-
-        redirect_list = []
-        redirect1 = Redirect(None)
-        redirect1.rel("on_success")
-        redirect1.uri("https://api.netbanx.com/echo?payment=success")
-		
-        redirect2 = Redirect(None)
-        redirect2.rel("on_decline")
-        redirect2.uri("https://api.netbanx.com/echo?payment=failure")
-
-        redirect3 = Redirect(None)
-        redirect3.rel("on_error")
-        redirect3.uri("https://api.netbanx.com/echo?payment=error")
-
-        redirect_list.append(redirect1.__dict__)
-        redirect_list.append(redirect2.__dict__)
-        redirect_list.append(redirect3.__dict__)
-        order_obj.redirect(redirect_list)
 		
         self._optimal_obj = OptimalApiClient(api_key=self._api_key,
                                              api_password=self._api_password, env="TEST", 
@@ -490,7 +465,7 @@ class SampleTest_Hosted(object):
 #o = SampleTest_Hosted().process_rebill_using_Profile() 
 #o = SampleTest_Hosted().process_order_with_payment_token()
 #o = SampleTest_Hosted().get_order()
-o = SampleTest_Hosted().get_order_report()
+o = SampleTest_Hosted().create_profile_with_order()
 #o = SampleTest_Hosted().update_order()
 #o = SampleTest_Hosted().settle_order()
 #o = SampleTest_Hosted().refund_order()

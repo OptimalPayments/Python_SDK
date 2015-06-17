@@ -360,7 +360,7 @@ class SampleTest_Customer(object):
 # Call Object
 #o = SampleTest_Customer().customer_vault_monitor()
 #o = SampleTest_Customer().create_customer_profile()
-#o = SampleTest_Customer().lookup_customer_profile()
+o = SampleTest_Customer().lookup_customer_profile()
 #o = SampleTest_Customer().lookup_customer_profile_subcomponents()
-o = SampleTest_Customer().create_card()
+#o = SampleTest_Customer().create_card()
         

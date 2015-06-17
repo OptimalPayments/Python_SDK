@@ -218,7 +218,7 @@ class CardPaymentsService(object):
     @raise: IOException
     @raise: OptimalException
     '''
-    def lookup_authorization_with_merchant_no(self, data):
+    def lookup_authorization_with_merchant_no(self, data, pagination_data):
         merchant_ref_no = data.merchantRefNum
         if inspect.ismethod(merchant_ref_no):
             err_msg = "Merchant Reference Number Id not available"
@@ -226,28 +226,58 @@ class CardPaymentsService(object):
                                        "400", 
                                        err_msg))
         del data.merchantRefNum
-        queryString = "merchantRefNum="+merchant_ref_no
-        
+
+        queryString = self._MERCHANT_REF_NUM + merchant_ref_no
+        limit = pagination_data.limit
+        offset = pagination_data.offset
+        start_date = pagination_data.startDate
+        end_date = pagination_data.endDate
+		
+        if (pagination_data is not None):
+            if inspect.ismethod(limit):
+               pass
+            else:
+               queryString = queryString + self._LIMIT + limit
+            if inspect.ismethod(offset):
+                pass
+            else:
+                queryString = queryString + self._OFFSET + offset
+            if inspect.ismethod(start_date):
+                pass
+            else:
+                queryString = queryString + self._START_DATE + start_date
+            if inspect.ismethod(end_date):
+                pass
+            else:
+                queryString = queryString + self._END_DATE + end_date
+
         FULL_URL = self._prepare_uri(self._ACCOUNTS + \
                                      self._account_no + \
                                      self._AUTH_PATH + \
-                                     "?" + \
                                      queryString)
-        # print ("Communicating to ", FULL_URL)
+        print ("Communicating to ", FULL_URL)
         response = self.optimal_object.process_request(
                                     req_method="GET", 
                                     url=FULL_URL, 
                                     data=None)
-        
         auths = []
-        if (response["auths"].__len__() == 0):
-            return (auths)
-        else:
-            for count in range(0,response["auths"].__len__()):
-                auths.append(self._process_response(
+        if 'error' in response:
+            return (self._process_response(
+                                response,
+                                CardPayments.Authorization.Authorization))
+        elif 'auths' in response:
+            if (response["auths"].__len__() == 0):
+                del response["auths"]
+                return (self._process_response(
+                                    response,
+                                    CardPayments.Authorization.Authorization))
+            elif (response["auths"].__len__() > 0):
+                for count in range(0,response["auths"].__len__()):
+                    auths.append(self._process_response(
                                     response["auths"][count],
                                     CardPayments.Authorization.Authorization))
-            return (auths)
+                return (auths)
+
     
     '''
     Authorize request with Payment Token
@@ -340,7 +370,7 @@ class CardPaymentsService(object):
     @raise: IOException
     @raise: OptimalExcetpion
     '''
-    def lookup_authorization_reversal_with_merchant_no(self, data):
+    def lookup_authorization_reversal_with_merchant_no(self, data, pagination_data):
         merchant_ref_no = data.merchantRefNum
         if inspect.ismethod(merchant_ref_no):
             err_msg = "Merchant Reference Number not available"
@@ -349,28 +379,59 @@ class CardPaymentsService(object):
                     "400", 
                     err_msg))
         del data.merchantRefNum
-        queryString = "merchantRefNum="+merchant_ref_no
         
+        queryString = self._MERCHANT_REF_NUM + merchant_ref_no
+        limit = pagination_data.limit
+        offset = pagination_data.offset
+        start_date = pagination_data.startDate
+        end_date = pagination_data.endDate
+		
+        if (pagination_data is not None):
+            if inspect.ismethod(limit):
+               pass
+            else:
+               queryString = queryString + self._LIMIT + limit
+            if inspect.ismethod(offset):
+                pass
+            else:
+                queryString = queryString + self._OFFSET + offset
+            if inspect.ismethod(start_date):
+                pass
+            else:
+                queryString = queryString + self._START_DATE + start_date
+            if inspect.ismethod(end_date):
+                pass
+            else:
+                queryString = queryString + self._END_DATE + end_date
+
         FULL_URL = self._prepare_uri(self._ACCOUNTS + \
                                      self._account_no + \
                                      self._AUTH_REVERSAL_PATH + \
-                                     "?" + \
                                      queryString)
+        
         # print ("Communicating to ", FULL_URL)
         response = self.optimal_object.process_request(
                                     req_method="GET", 
                                     url=FULL_URL, 
                                     data=None)
         authsReversals = []
-        if (response["voidAuths"].__len__() == 0):
-            return (authsReversals)
-        else:
-            for count in range(0,response["voidAuths"].__len__()):
-                authsReversals.append(self._process_response(
-                    response["voidAuths"][count],
-                    CardPayments.AuthorizationReversal.AuthorizationReversal))
-            return (authsReversals)
-    
+        if 'error' in response:
+            return (self._process_response(
+                                response,
+                                CardPayments.AuthorizationReversal.AuthorizationReversal))
+        elif 'voidAuths' in response:
+            if (response["voidAuths"].__len__() == 0):
+                del response["voidAuths"]
+                return (self._process_response(
+                                    response,
+                                    CardPayments.AuthorizationReversal.AuthorizationReversal))
+            elif (response["voidAuths"].__len__() > 0):
+                for count in range(0,response["voidAuths"].__len__()):
+                    authsReversals.append(self._process_response(
+                                    response["voidAuths"][count],
+                                    CardPayments.AuthorizationReversal.AuthorizationReversal))
+                return (authsReversals)
+                    
     '''
     Reverse an Authorization using Merchant Reference Number
     
@@ -474,7 +535,7 @@ class CardPaymentsService(object):
     @raise: IOException
     @raise: OptimalException
     '''
-    def lookup_settlement_with_merchant_no(self, data):
+    def lookup_settlement_with_merchant_no(self, data, pagination_data):
         merchant_ref_no = data.merchantRefNum
         if inspect.ismethod(merchant_ref_no):
             err_msg = "Merchant Reference Number not available"
@@ -483,27 +544,59 @@ class CardPaymentsService(object):
                                     "400", 
                                     err_msg))
         del data.merchantRefNum
-        queryString = "merchantRefNum="+merchant_ref_no
-        
+
+        queryString = self._MERCHANT_REF_NUM + merchant_ref_no
+        limit = pagination_data.limit
+        offset = pagination_data.offset
+        start_date = pagination_data.startDate
+        end_date = pagination_data.endDate
+		
+        if (pagination_data is not None):
+            if inspect.ismethod(limit):
+               pass
+            else:
+               queryString = queryString + self._LIMIT + limit
+            if inspect.ismethod(offset):
+                pass
+            else:
+                queryString = queryString + self._OFFSET + offset
+            if inspect.ismethod(start_date):
+                pass
+            else:
+                queryString = queryString + self._START_DATE + start_date
+            if inspect.ismethod(end_date):
+                pass
+            else:
+                queryString = queryString + self._END_DATE + end_date
+
         FULL_URL = self._prepare_uri(self._ACCOUNTS + \
-                                     self._account_no +  \
+                                     self._account_no + \
                                      self._SETTLEMENT_PATH + \
-                                     "?" + \
                                      queryString)
+        
         # print ("Communicating to ", FULL_URL)             
         response = self.optimal_object.process_request(
                                     req_method="GET", 
                                     url=FULL_URL, 
                                     data=data)
         settlements = []
-        if (response["settlements"].__len__() == 0):
-            return (settlements)
-        else:
-            for count in range(0,response["settlements"].__len__()):
-                settlements.append(
-                    self._process_response(response["settlements"][count],
-                    CardPayments.Settlement.Settlement))
-            return (settlements)
+        if 'error' in response:
+            return (self._process_response(
+                                response,
+                                CardPayments.Settlement.Settlement))
+        elif 'settlements' in response:
+            if (response["settlements"].__len__() == 0):
+                del response["settlements"]
+                return (self._process_response(
+                                    response,
+                                    CardPayments.Settlement.Settlement))
+            elif (response["settlements"].__len__() > 0):
+                for count in range(0,response["settlements"].__len__()):
+                    settlements.append(self._process_response(
+                                    response["settlements"][count],
+                                    CardPayments.Settlement.Settlement))
+                return (settlements)
+
         
     '''
     Cancel a Settlement
@@ -607,7 +700,7 @@ class CardPaymentsService(object):
     @raise: IOException
     @raise: OptimalException
     '''
-    def lookup_refund_with_merchant_no(self, data):
+    def lookup_refund_with_merchant_no(self, data, pagination_data):
         merchant_ref_no = data.merchantRefNum
         if inspect.ismethod(merchant_ref_no):
             err_msg = "Merchant Reference Number not available"
@@ -616,27 +709,59 @@ class CardPaymentsService(object):
                                     "400", 
                                     err_msg))
         del data.merchantRefNum
-        queryString = "merchantRefNum="+merchant_ref_no
-        
+
+        queryString = self._MERCHANT_REF_NUM + merchant_ref_no
+        limit = pagination_data.limit
+        offset = pagination_data.offset
+        start_date = pagination_data.startDate
+        end_date = pagination_data.endDate
+		
+        if (pagination_data is not None):
+            if inspect.ismethod(limit):
+               pass
+            else:
+               queryString = queryString + self._LIMIT + limit
+            if inspect.ismethod(offset):
+                pass
+            else:
+                queryString = queryString + self._OFFSET + offset
+            if inspect.ismethod(start_date):
+                pass
+            else:
+                queryString = queryString + self._START_DATE + start_date
+            if inspect.ismethod(end_date):
+                pass
+            else:
+                queryString = queryString + self._END_DATE + end_date
+
         FULL_URL = self._prepare_uri(self._ACCOUNTS + \
-                                     self._account_no +\
+                                     self._account_no + \
                                      self._REFUND_PATH + \
-                                     "?" + \
                                      queryString)
+        
         # print ("Communicating to ", FULL_URL)        
         response = self.optimal_object.process_request(
                                     req_method="GET", 
                                     url=FULL_URL, 
                                     data=data)  
         refunds = []
-        if (response["refunds"].__len__() == 0):
-            return (refunds)
-        else:
-            for count in range(0,response["refunds"].__len__()):
-                refunds.append(
-                            self._process_response(response["refunds"][count],
-                            CardPayments.Refund.Refund))
-            return (refunds)
+        if 'error' in response:
+            return (self._process_response(
+                                response,
+                                CardPayments.Refund.Refund))
+        elif 'refunds' in response:
+            if (response["refunds"].__len__() == 0):
+                del response["refunds"]
+                return (self._process_response(
+                                    response,
+                                    CardPayments.Refund.Refund))
+            elif (response["refunds"].__len__() > 0):
+                for count in range(0,response["refunds"].__len__()):
+                    refunds.append(self._process_response(
+                                    response["refunds"][count],
+                                    CardPayments.Refund.Refund))
+                return (refunds)
+
     
     '''
     Cancel a Refund
@@ -730,7 +855,7 @@ class CardPaymentsService(object):
     @raise: IOException
     @raise: OptimalException
     '''
-    def lookup_verification_using_merchant_ref_num(self, data, limit):
+    def lookup_verification_using_merchant_ref_num(self, data, pagination_data):
         merchant_ref_no = data.merchantRefNum
         if inspect.ismethod(merchant_ref_no):
             err_msg = "Merchant Reference Number not available"
@@ -739,27 +864,56 @@ class CardPaymentsService(object):
                                     "400", 
                                     err_msg))
         del data.merchantRefNum
-        if limit is None:
-            limit = '10'
-        
+
+        queryString = self._MERCHANT_REF_NUM + merchant_ref_no
+        limit = pagination_data.limit
+        offset = pagination_data.offset
+        start_date = pagination_data.startDate
+        end_date = pagination_data.endDate
+		
+        if (pagination_data is not None):
+            if inspect.ismethod(limit):
+               pass
+            else:
+               queryString = queryString + self._LIMIT + limit
+            if inspect.ismethod(offset):
+                pass
+            else:
+                queryString = queryString + self._OFFSET + offset
+            if inspect.ismethod(start_date):
+                pass
+            else:
+                queryString = queryString + self._START_DATE + start_date
+            if inspect.ismethod(end_date):
+                pass
+            else:
+                queryString = queryString + self._END_DATE + end_date
+
         FULL_URL = self._prepare_uri(self._ACCOUNTS + \
-                                     self._account_no +\
+                                     self._account_no + \
                                      self._VERIFY_PATH + \
-                                     self._MERCHANT_REF_NUM + \
-                                     merchant_ref_no + \
-                                     self._LIMIT + \
-                                     limit)
+                                     queryString)
+        
         # print ("Communicating to ", FULL_URL)
         response = self.optimal_object.process_request(
                                     req_method="GET",
                                     url=FULL_URL,
                                     data=data)
         verification_list = []
-        if (response["verifications"].__len__() == 0):
-            return (verification_list)
-        else:
-            for count in range(0,response["verifications"].__len__()):
-                verification_list.append(
-                            self._process_response(response["verifications"][count],
-                            CardPayments.Verification.Verification))
-            return (verification_list)
+        if 'error' in response:
+            return (self._process_response(
+                                response,
+                                CardPayments.Verification.Verification))
+        elif 'verifications' in response:
+            if (response["verifications"].__len__() == 0):
+                del response["verifications"]
+                return (self._process_response(
+                                    response,
+                                    CardPayments.Verification.Verification))
+            elif (response["verifications"].__len__() > 0):
+                for count in range(0,response["verifications"].__len__()):
+                    verification_list.append(self._process_response(
+                                    response["verifications"][count],
+                                    CardPayments.Verification.Verification))
+                return (verification_list)
+
