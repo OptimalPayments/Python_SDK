@@ -140,7 +140,7 @@ class CardPaymentsService(object):
                                      auth_id)
         # print ("Communicating to ", FULL_URL)
         response = self.optimal_object.process_request(
-                                    req_method="POST", 
+                                    req_method="PUT", 
                                     url=FULL_URL, 
                                     data=data)
         return (self._process_response(
