@@ -99,7 +99,7 @@ class SampleTest_Hosted(object):
                                                  
         print ("Create Order Response: ")
         print (response_object.__dict__)
-		
+        		
 
     def silent_post(self):
         '''
@@ -190,7 +190,8 @@ class SampleTest_Hosted(object):
                                             ).create_order(order_obj)    
                                                  
         print ("Create Order Response: ")
-        print (response_object)
+        print (response_object.__dict__)
+        print (response_object.id)
     
 
     def process_order_with_profile_id(self):
@@ -463,9 +464,9 @@ class SampleTest_Hosted(object):
 
 #o = SampleTest_Hosted().create_order()
 #o = SampleTest_Hosted().process_rebill_using_Profile() 
-#o = SampleTest_Hosted().process_order_with_payment_token()
+o = SampleTest_Hosted().process_order_with_payment_token()
 #o = SampleTest_Hosted().get_order()
-o = SampleTest_Hosted().create_profile_with_order()
+#o = SampleTest_Hosted().create_profile_with_order()
 #o = SampleTest_Hosted().update_order()
 #o = SampleTest_Hosted().settle_order()
 #o = SampleTest_Hosted().refund_order()

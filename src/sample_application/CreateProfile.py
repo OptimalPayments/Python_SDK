@@ -1,12 +1,9 @@
-#!/usr/bin/python3
-
+#!/usr/bin/env python3
 '''
 Created on 1-Apr-2015
 
 @author: Asawari.Vaidya
 '''
-#import sys
-#sys.path.append('../.')
 from PythonNetBanxSDK.OptimalApiClient import OptimalApiClient
 from PythonNetBanxSDK.CustomerVault.Profile import Profile
 from RandomTokenGenerator import RandomTokenGenerator
@@ -30,4 +27,4 @@ print ('<html>')
 print ('<head><title>Customer Vault - Create Customer Profile</title></head>')
 print ('<body>')
 print (response_object.__dict__)
-Print ('</body></html>')
+print ('</body></html>')

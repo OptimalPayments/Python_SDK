@@ -38,6 +38,12 @@ class Card(DomainObject):
         self.__dict__['id'] = id_
         
     '''
+    Property Single Use Token
+    '''
+    def singleUseToken(self, single_use_token):
+        self.__dict__['singleUseToken'] = single_use_token
+
+    '''
     Property Nick Name
     '''        
     def nickName(self, nick_name):

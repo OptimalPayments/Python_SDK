@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 '''
 Created on 23-Feb-2015
 

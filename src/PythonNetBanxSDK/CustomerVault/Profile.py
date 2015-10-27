@@ -22,6 +22,7 @@ class Profile(DomainObject):
         handler['dateOfBirth'] = self.dateOfBirth
         handler['addresses'] = self.addresses
         handler['cards'] = self.cards
+        handler['card'] = self.card
         handler['error'] = self.error
         handler['links'] = self.links
         
@@ -138,7 +139,15 @@ class Profile(DomainObject):
             for count in range(0, addresses.__len__()):
                 addr_obj = Address(addresses[count])
                 self.__dict__.setdefault('addresses', []).append(addr_obj)    
-                    
+    
+    '''
+    Property Card
+    @param: Card Object
+    '''        
+    def card(self, card):
+        p = Card(card.__dict__)
+        self.__dict__['card'] = p
+    
     '''
     Property Card
     @param: Card Object, List of Card Objects

@@ -89,11 +89,15 @@ class SampleTest_Card(object):
         auth_obj.amount("1200")
           
         card_obj = Card(None)
-        card_obj.paymentToken("C7dEdq9Mcz4nwyy")
-          
+        #C7dEdq9Mcz4nwyy old
+        #Cejmh5QvaUyLGwA
+        card_obj.paymentToken("Cejmh5QvaUyLGwA")
         auth_obj.card(card_obj)
         
-
+        #billing_obj = BillingDetails(None)
+        #billing_obj.zip("M5H 2N2")
+        #auth_obj.billingDetails(billing_obj)
+        
         self._optimal_obj = OptimalApiClient(self._api_key,
                                              self._api_password, 
                                              "TEST", 
@@ -176,7 +180,8 @@ class SampleTest_Card(object):
         card_obj = Card(None)
         cardExpiry_obj = CardExpiry(None)
         billing_obj = BillingDetails(None)
-		
+        profile_obj = Profile(None)
+
         auth_obj.merchantRefNum(RandomTokenGenerator().generateToken())
         auth_obj.amount("1400")
         auth_obj.settleWithAuth("false")
@@ -191,8 +196,11 @@ class SampleTest_Card(object):
 		
         billing_obj.zip("M5H 2N2")
         auth_obj.billingDetails(billing_obj)
-	
 
+        profile_obj.firstName("John")
+        profile_obj.lastName("Smith")
+        auth_obj.profile(profile_obj)
+        
         self._optimal_obj = OptimalApiClient(self._api_key,
                                              self._api_password, 
                                              "TEST", 
@@ -202,6 +210,7 @@ class SampleTest_Card(object):
                                             
         print ("Complete Response : ")
         print (response_object.__dict__)
+        print ("Profile: ", response_object.profile.__dict__)
         print ("Card ID: ", response_object.card.__dict__)
 		
     def payment_process_with_card_settle_with_auth_true(self):
@@ -571,7 +580,7 @@ class SampleTest_Card(object):
 
 
 # Call Object
-o = SampleTest_Card().lookup_verification_using_merchant_ref_num()
+o = SampleTest_Card().create_authorization_with_card()
 
 
         

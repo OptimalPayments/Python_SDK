@@ -1,3 +1,4 @@
+# coding: UTF-8
 '''
 Created on 05-Feb-2015
 
@@ -11,6 +12,10 @@ from PythonNetBanxSDK.CustomerVault.DateOfBirth import DateOfBirth
 from PythonNetBanxSDK.CustomerVault.Card import Card
 from PythonNetBanxSDK.common.CardExpiry import CardExpiry
 from PythonNetBanxSDK import common
+import urllib3
+from urllib3.connectionpool import HTTPSConnectionPool
+import json
+import certifi
 
 
 class SampleTest_Customer(object):
@@ -19,15 +24,28 @@ class SampleTest_Customer(object):
     '''
 
     # Static data
-    _api_key = 'devcentre4628'
-    _api_password = 'B-qa2-0-548ef25d-302b0213119f70d83213f828bc442dfd0af3280a7b48b1021400972746f9abe438554699c8fa3617063ca4c69a'
-    _account_number = '89983472'
+    _api_key1 = 'devcentre4628'
+    _api_password1 = 'B-qa2-0-548ef25d-302b0213119f70d83213f828bc442dfd0af3280a7b48b1021400972746f9abe438554699c8fa3617063ca4c69a'
+    _account_number1 = '89983472'
+
+    #_api_key = 'opus-sbox'
+    #_api_password = 'B-qa2-0-54c80abb-0-302d0215008374329e4db71b82151c15f3be823700c155372602142a2afa9979ec90b59e2232dd292ee1798aa1f5b2'
+    #_account_number = '1001187820'
+    
+    _api_key = 'devcentre4651'
+    _api_password = 'B-qa2-0-54b5374e-302d02147911306b5c6db4ad74e083803733163195c75ef902150095b4a21a5ea7f4c19b7b37aed1944490b59e785e'
+    _account_number = '1000032987'
 
 
     optimal_obj = OptimalApiClient(_api_key,
                                    _api_password,
                                     "TEST",
                                     _account_number)
+    
+    optimal_obj1 = OptimalApiClient(_api_key1,
+                                   _api_password1,
+                                    "TEST",
+                                    _account_number1)
     
     def __init__(self):
         '''
@@ -52,12 +70,16 @@ class SampleTest_Customer(object):
         #profile_obj.merchantCustomerId("4jdccmrtcqb964u1")
         profile_obj.merchantCustomerId(RandomTokenGenerator().generateToken())
         profile_obj.locale("en_US")
-        profile_obj.firstName("John")
+        profile_obj.firstName("Andr\u00E9 Jean")
         profile_obj.lastName("Smith")
         profile_obj.email("john.smith@somedomain.com")
         profile_obj.phone("713-444-5555")
-           
-        response_object = self.optimal_obj.customer_vault_service_handler(
+        
+        print ("api-key======", self.optimal_obj1._api_key)
+        print ("api-password======", self.optimal_obj1._api_password)
+        print ("api-account======", self.optimal_obj1._account_number)
+        
+        response_object = self.optimal_obj1.customer_vault_service_handler(
                                             ).create_profile(profile_obj)
         
         print ("response object : ")
@@ -97,10 +119,12 @@ class SampleTest_Customer(object):
         is_addresses = True
         is_cards = True
         profile_obj = Profile(None)
+		#dae5f3d7-aa7c-45c0-8d41-23fc82022f6a - singleusetoken
         #profile_obj.id("f920d2a3-6582-4cc2-acc6-bdf7cfa626a3")
-        profile_obj.id("f25a445d-395d-43dd-bd8d-f82cbe46dd40")
+        #d76208a7-cc28-4803-bbf3-e2091f124824
+        profile_obj.id("4818c6de-5687-4afb-930d-cbeb106bf757")
 		
-        response_object = self.optimal_obj.customer_vault_service_handler(
+        response_object = self.optimal_obj1.customer_vault_service_handler(
                                             ).lookup_profile_subcomponents(
                                             profile_obj, 
                                             is_addresses, 
@@ -112,10 +136,13 @@ class SampleTest_Customer(object):
         #for c in range(0, response_object.addresses.__len__()):
         #    print (response_object.addresses[c].id)
         print ("Cards:")
+        
         for c in range(0, response_object.cards.__len__()):
+            print (response_object.cards[c].__dict__)
             print (response_object.cards[c].id)
             print (response_object.cards[c].cardExpiry.month)
             print (response_object.cards[c].paymentToken)
+        
 
     
             
@@ -188,7 +215,7 @@ class SampleTest_Customer(object):
         address_obj.recipientName("Jane Doe")
             
         profile_obj = Profile(None)
-        profile_obj.id("590f11a7-063a-48e6-a742-f612cd777c21")
+        profile_obj.id("556ab258-cacc-406c-8cd8-412fde6b6e4f")
         address_obj.profile(profile_obj)
     
         response_object = self.optimal_obj.customer_vault_service_handler(
@@ -277,15 +304,16 @@ class SampleTest_Customer(object):
         #6759950000000162
 		#4917480000000008
 		#4530910000012345
-        card_obj.cardNum("4510150000000321")
-        card_obj.billingAddressId("b25b4c96-3524-49ef-aa4a-d555bbac7a3b")
+        #375529360131002
+        card_obj.cardNum("375529360131002")
+        card_obj.billingAddressId("0c84d4a4-97f2-4cbd-b92b-3a7c9403b69e")
         card_obj.defaultCardIndicator("true")
         card_exp_obj = CardExpiry(None)
         card_exp_obj.month("12")
         card_exp_obj.year("2019")
         profile_obj = Profile(None)
         #rofile_obj.id("f25a445d-395d-43dd-bd8d-f82cbe46dd40")
-        profile_obj.id("590f11a7-063a-48e6-a742-f612cd777c21")
+        profile_obj.id("34361085-c873-4b2f-a61e-18cfdc5bd02c")
         card_obj.profile(profile_obj)
         card_obj.cardExpiry(card_exp_obj)
 
@@ -319,15 +347,15 @@ class SampleTest_Customer(object):
         Update Customer Card
         '''
         card_obj = Card(None)
-        card_obj.id("0ee626fe-44fb-46b2-97a1-53795bd24d40")
+        card_obj.id("177fa616-0375-4b09-865b-a6d570eb415a")
         card_obj.holderName("MR. JOHN JAMES SMITH")
-        card_obj.defaultCardIndicator("true")
+        card_obj.defaultCardIndicator("false")
         card_exp_obj = CardExpiry(None)
         card_exp_obj.month("12")
         card_exp_obj.year("2019")
                 
         profile_obj = Profile(None)
-        profile_obj.id("6ce868cf-5488-414c-87a1-d51dc461a3e2")
+        profile_obj.id("34361085-c873-4b2f-a61e-18cfdc5bd02c")
         card_obj.profile(profile_obj)
         card_obj.cardExpiry(card_exp_obj)
 
@@ -351,16 +379,86 @@ class SampleTest_Customer(object):
         response_object = self.optimal_obj.customer_vault_service_handler(
                                             ).delete_card(card_obj)
         print ("Respone Object : ")
-        print (response_object.__dict__)  
-            
-            
-            
-            
-   
-# Call Object
-#o = SampleTest_Customer().customer_vault_monitor()
-#o = SampleTest_Customer().create_customer_profile()
-o = SampleTest_Customer().lookup_customer_profile()
-#o = SampleTest_Customer().lookup_customer_profile_subcomponents()
-#o = SampleTest_Customer().create_card()
+        print (response_object.__dict__)
+
         
+    def create_profile_single_use_token_2(self):
+        data = {
+            "card": {
+                "holderName": "MR. JOHN SMITH",
+                "cardNum": "4917484589897107",
+                "cardExpiry": {
+                    "month": "12",
+                    "year": "2019"
+                },
+                "billingAddress": {
+                    "street": "100 Queen Street West",
+                    "street2": "Unit 201",
+                    "city": "Toronto",
+                    "country": "CA",
+                    "state": "ON",
+                    "zip": "M5H 2N2"
+                }
+            }
+        }
+
+        #username = 'devcentre4651'
+        #password = 'B-qa2-0-54b5374e-302d02147911306b5c6db4ad74e083803733163195c75ef902150095b4a21a5ea7f4c19b7b37aed1944490b59e785e'
+        url = "/customervault/v1/singleusetokens"    
+        
+        header_content = {"content-type": "application/json;charset=utf-8"}
+        header_auth = {"Authorization": "Basic T1QtMTYxNTY6Qi1xYTItMC01NTJiOWJjZi0wLTMwMmMwMjE0NGVkOGY5YjhhZWE5ZDY1YjQ0Yjc3YTE2YTgxZWM1ZjlhYjkxNmY4YzAyMTQyYjRlNjliM2EyNzJiODY2YjFlMjYzYjBiMGM3YTkyNWE4OTQ1NDE4"}
+        #auth_header = urllib3.util.make_headers(basic_auth=username+":"+password)
+        
+        pool = HTTPSConnectionPool('api.test.netbanx.com',
+                                    cert_reqs='CERT_REQUIRED',
+                                    ca_certs=certifi.where())
+        pool.headers.update(header_content)
+        pool.headers.update(header_auth)
+        
+        response = pool.urlopen("POST", url, body=json.dumps(data))
+        
+        print (response.status)
+        print (response.data)
+        
+        res = response.data
+        resp_str = res.decode('utf-8')
+        json_obj = json.loads(resp_str)
+        
+        print ("payment token", json_obj['paymentToken'])        
+        
+        return (json_obj['paymentToken'])
+        
+
+    def create_profile_single_use_token(self):
+        '''
+        Create Profile using Single Use Token
+        '''
+             
+        profile_obj1 = Profile(None)
+        profile_obj1.merchantCustomerId(RandomTokenGenerator().generateToken())
+        profile_obj1.locale("en_US")
+        #profile_obj.firstName("John")
+        #profile_obj.lastName("Smith")
+        #profile_obj.email("john.smith@somedomain.com")
+        #profile_obj.phone("713-444-5555")
+        
+        card_obj = Card(None)
+        #card_obj.singleUseToken("SCO0Jpx9JUP9hESh")
+        card_obj.singleUseToken(self.create_profile_single_use_token_2())
+        profile_obj1.card(card_obj)
+        print ("api-key======", self.optimal_obj._api_key)
+        print ("api-password======", self.optimal_obj._api_password)
+        print ("api-account======", self.optimal_obj._account_number)
+        #print ("api-key======", self.optimal_obj._api_key)
+        
+        response_object = self.optimal_obj.customer_vault_service_handler(
+                                ).create_profile(profile_obj1)
+        print ("Respone Object : ")
+        print (response_object.__dict__)  
+        print (response_object.error.code)
+        print (response_object.error.message)
+        
+
+
+o = SampleTest_Customer().create_customer_profile()
