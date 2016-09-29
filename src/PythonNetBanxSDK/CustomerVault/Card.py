@@ -3,11 +3,12 @@ Created on 24-Feb-2015
 
 @author: asawari.vaidya
 '''
-from PythonNetBanxSDK import common
 from PythonNetBanxSDK import CustomerVault
-from PythonNetBanxSDK.common.Link import Link
+from PythonNetBanxSDK import common
 from PythonNetBanxSDK.common.CardExpiry import CardExpiry
 from PythonNetBanxSDK.common.DomainObject import DomainObject
+from PythonNetBanxSDK.CustomerVault.Addresses import Address
+from PythonNetBanxSDK.common.Link import Link
 
 
 class Card(DomainObject):
@@ -25,6 +26,8 @@ class Card(DomainObject):
         handler['profile'] = self.profile
         handler['error'] = self.error
         handler['links'] = self.links
+        handler['billingAddress'] = self.billingAddress
+        
         
         if obj is not None:
             self.setProperties(obj, handler=handler)
@@ -96,9 +99,20 @@ class Card(DomainObject):
     '''        
     def cardType(self, card_type):
         self.__dict__['cardType'] = card_type
-      
+    
     '''
     Property Billing Address
+    '''
+    def billingAddress(self, billing_address):
+        if isinstance (billing_address, Address):
+            p = Address(billing_address.__dict__)
+            self.__dict__['billingAddress'] = p.__dict__
+        else:
+            p = Address(billing_address)
+            self.__dict__['billingAddress'] = p
+    
+    '''
+    Property Billing Address Id
     '''        
     def billingAddressId(self, billing_address_id):
         self.__dict__['billingAddressId'] = billing_address_id

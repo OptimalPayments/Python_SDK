@@ -4,13 +4,15 @@ Created on 1-Apr-2015
 
 @author: Asawari.Vaidya
 '''
+from PythonNetBanxSDK.CustomerVault.Profile import Profile
 from PythonNetBanxSDK.HostedPayment.ExtendedOptions import ExtendedOptions
+from PythonNetBanxSDK.HostedPayment.Order import Order
 from PythonNetBanxSDK.HostedPayment.Redirect import Redirect
 from PythonNetBanxSDK.OptimalApiClient import OptimalApiClient
-from PythonNetBanxSDK.HostedPayment.Order import Order
-from PythonNetBanxSDK.CustomerVault.Profile import Profile
-from RandomTokenGenerator import RandomTokenGenerator
+
 from Config import Config
+from RandomTokenGenerator import RandomTokenGenerator
+
 
 optimal_obj = OptimalApiClient(Config.api_key, Config.api_password, Config.environment, Config.account_number)
 

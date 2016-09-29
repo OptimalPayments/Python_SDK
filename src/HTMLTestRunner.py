@@ -91,11 +91,11 @@ Version in 0.7.1
 # TODO: simplify javascript using ,ore than 1 class in the class attribute?
 
 import datetime
-import io as StringIO
 import sys
-import time
 import unittest
 from xml.sax import saxutils
+
+import io as StringIO
 
 
 # ------------------------------------------------------------------------
@@ -108,7 +108,6 @@ from xml.sax import saxutils
 # e.g.
 #   >>> logging.basicConfig(stream=HTMLTestRunner.stdout_redirector)
 #   >>>
-
 class OutputRedirector(object):
     """ Wrapper to redirect stdout or stderr """
     def __init__(self, fp):

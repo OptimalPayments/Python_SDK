@@ -3,12 +3,16 @@ Created on 04-Feb-2015
 
 @author: Asawari.Vaidya
 '''
+from PythonNetBanxSDK.CustomerVault.ACHBankAccount import ACHBankAccount
 from PythonNetBanxSDK.CustomerVault.Addresses import Address
+from PythonNetBanxSDK.CustomerVault.BACSBankAccount import BACSBankAccount
 from PythonNetBanxSDK.CustomerVault.Card import Card
+from PythonNetBanxSDK.CustomerVault.DateOfBirth import DateOfBirth
+from PythonNetBanxSDK.CustomerVault.EFTBankAccount import EFTBankAccount
+from PythonNetBanxSDK.CustomerVault.SEPABankAccount import SEPABankAccount
+from PythonNetBanxSDK.common.DomainObject import DomainObject
 from PythonNetBanxSDK.common.Error import Error
 from PythonNetBanxSDK.common.Link import Link
-from PythonNetBanxSDK.CustomerVault.DateOfBirth import DateOfBirth
-from PythonNetBanxSDK.common.DomainObject import DomainObject
 
 
 class Profile(DomainObject):
@@ -25,6 +29,10 @@ class Profile(DomainObject):
         handler['card'] = self.card
         handler['error'] = self.error
         handler['links'] = self.links
+        handler['achBankAccounts']= self.achBankAccounts
+        handler['bacsBankAccounts'] = self.bacsBankAccounts
+        handler['eftBankAccounts'] = self.eftBankAccounts
+        handler['sepaBankAccounts'] = self.sepaBankAccounts
         
         if obj is not None:
             self.setProperties(obj, handler=handler)
@@ -128,8 +136,8 @@ class Profile(DomainObject):
         self.__dict__['paymentToken'] = payment_token
     
     '''
-    Property Address
-    @param: Address Object, List of Address Objects
+    Property Addresses
+    @param: Addresses Object, List of Addresses Objects
     '''        
     def addresses(self, addresses):
         if isinstance(addresses, Address):
@@ -181,3 +189,55 @@ class Profile(DomainObject):
             for count in range(0, links.__len__()):
                 l = Link(links[count])
                 self.__dict__.setdefault('links', []).append(l)
+    
+    '''
+    Property achBankAccounts 
+    @param: achBankAccounts  Object, List of achBankAccounts  Objects
+    '''       
+    def achBankAccounts(self, ach_bank_accounts ):
+        if isinstance(ach_bank_accounts, ACHBankAccount):
+            p = ACHBankAccount(ach_bank_accounts)
+            self.__dict__['achBankAccounts'] = p
+        else:
+            for count in range(0, ach_bank_accounts.__len__()):
+                p = ACHBankAccount(ach_bank_accounts[count])
+                self.__dict__.setdefault('achBankAccounts', []).append(p)
+                
+    '''
+    Property bacsBankAccounts
+    @param: bacsbankaccount Object, List of bacsBankAccounts Objects
+    '''        
+    def bacsBankAccounts(self, bacs_bank_accounts):
+        if isinstance(bacs_bank_accounts, BACSBankAccount):
+            p = BACSBankAccount(bacs_bank_accounts)
+            self.__dict__['bacsBankAccounts'] = p
+        else:
+            for count in range(0, bacs_bank_accounts.__len__()):
+                p = BACSBankAccount(bacs_bank_accounts[count])
+                self.__dict__.setdefault('bacsBankAccounts', []).append(p)
+            
+    '''
+    Property eftBankAccounts 
+    @param: eftbankaccount  Object, List of eftBankAccounts  Objects
+    '''        
+    def eftBankAccounts(self, eft_bank_accounts ):
+        if isinstance(eft_bank_accounts, EFTBankAccount ):
+            p = EFTBankAccount (eft_bank_accounts)
+            self.__dict__['eftBankAccounts '] = p
+        else:
+            for count in range(0, eft_bank_accounts.__len__()):
+                p = EFTBankAccount(eft_bank_accounts[count])
+                self.__dict__.setdefault('eftBankAccounts ', []).append(p)
+              
+    '''
+    Property sepaBankAccounts
+    @param: sepabankaccount Object, List of sepaBankAccounts  Objects
+    '''        
+    def sepaBankAccounts(self, sepa_bank_accounts ):
+        if isinstance(sepa_bank_accounts, SEPABankAccount ):
+            p = SEPABankAccount (sepa_bank_accounts)
+            self.__dict__['sepaBankAccounts '] = p
+        else:
+            for count in range(0, sepa_bank_accounts.__len__()):
+                p = SEPABankAccount(sepa_bank_accounts[count])
+                self.__dict__.setdefault('sepaBankAccounts ', []).append(p)

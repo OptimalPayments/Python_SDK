@@ -4,16 +4,22 @@ Created on 1-Apr-2015
 
 @author: Asawari.Vaidya
 '''
-import cgitb
-cgitb.enable()
 import cgi
+import cgitb
+
 from PythonNetBanxSDK.CardPayments.Authorization import Authorization
+from PythonNetBanxSDK.CardPayments.BillingDetails import BillingDetails
 from PythonNetBanxSDK.CardPayments.Card import Card
 from PythonNetBanxSDK.CardPayments.CardExpiry import CardExpiry
-from PythonNetBanxSDK.CardPayments.BillingDetails import BillingDetails
 from PythonNetBanxSDK.OptimalApiClient import OptimalApiClient
-from RandomTokenGenerator import RandomTokenGenerator
+
 from Config import Config
+from RandomTokenGenerator import RandomTokenGenerator
+
+
+cgitb.enable()
+#from sample_application.RandomTokenGenerator import RandomTokenGenerator
+#from sample_application.Config import Config
 
 form = cgi.FieldStorage()
 card_num = form.getvalue('cardNumber')

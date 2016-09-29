@@ -4,9 +4,10 @@ Created on 05-Feb-2015
 @author: Asawari.Vaidya
 '''
 from PythonNetBanxSDK import CardPayments
-from PythonNetBanxSDK.common.DomainObject import DomainObject
 from PythonNetBanxSDK import common
+from PythonNetBanxSDK.common.DomainObject import DomainObject
 from PythonNetBanxSDK.common.Error import Error
+
 
 class Refund(DomainObject):
     '''

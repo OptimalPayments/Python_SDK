@@ -4,6 +4,7 @@ Created on 30-Jan-2015
 @author: Asawari.Vaidya
 '''
 import inspect
+
 from PythonNetBanxSDK import CardPayments, common
 
 
@@ -232,12 +233,12 @@ class CardPaymentsService(object):
         offset = pagination_data.offset
         start_date = pagination_data.startDate
         end_date = pagination_data.endDate
-		
+        
         if (pagination_data is not None):
             if inspect.ismethod(limit):
-               pass
+                pass
             else:
-               queryString = queryString + self._LIMIT + limit
+                queryString = queryString + self._LIMIT + limit
             if inspect.ismethod(offset):
                 pass
             else:
@@ -255,7 +256,7 @@ class CardPaymentsService(object):
                                      self._account_no + \
                                      self._AUTH_PATH + \
                                      queryString)
-        print ("Communicating to ", FULL_URL)
+        # print ("Communicating to ", FULL_URL)
         response = self.optimal_object.process_request(
                                     req_method="GET", 
                                     url=FULL_URL, 
@@ -385,12 +386,12 @@ class CardPaymentsService(object):
         offset = pagination_data.offset
         start_date = pagination_data.startDate
         end_date = pagination_data.endDate
-		
+        
         if (pagination_data is not None):
             if inspect.ismethod(limit):
-               pass
+                pass
             else:
-               queryString = queryString + self._LIMIT + limit
+                queryString = queryString + self._LIMIT + limit
             if inspect.ismethod(offset):
                 pass
             else:
@@ -550,12 +551,12 @@ class CardPaymentsService(object):
         offset = pagination_data.offset
         start_date = pagination_data.startDate
         end_date = pagination_data.endDate
-		
+        
         if (pagination_data is not None):
             if inspect.ismethod(limit):
-               pass
+                pass
             else:
-               queryString = queryString + self._LIMIT + limit
+                queryString = queryString + self._LIMIT + limit
             if inspect.ismethod(offset):
                 pass
             else:
@@ -715,12 +716,12 @@ class CardPaymentsService(object):
         offset = pagination_data.offset
         start_date = pagination_data.startDate
         end_date = pagination_data.endDate
-		
+        
         if (pagination_data is not None):
             if inspect.ismethod(limit):
-               pass
+                pass
             else:
-               queryString = queryString + self._LIMIT + limit
+                queryString = queryString + self._LIMIT + limit
             if inspect.ismethod(offset):
                 pass
             else:
@@ -804,7 +805,7 @@ class CardPaymentsService(object):
     '''
     def verify_card(self, data):
         FULL_URL = self._prepare_uri(self._ACCOUNTS + \
-		                             self._account_no + \
+                                     self._account_no + \
                                      self._VERIFY_PATH)
         # print ("Communicating to ", FULL_URL)
         response = self.optimal_object.process_request(
@@ -870,12 +871,12 @@ class CardPaymentsService(object):
         offset = pagination_data.offset
         start_date = pagination_data.startDate
         end_date = pagination_data.endDate
-		
+        
         if (pagination_data is not None):
             if inspect.ismethod(limit):
-               pass
+                pass
             else:
-               queryString = queryString + self._LIMIT + limit
+                queryString = queryString + self._LIMIT + limit
             if inspect.ismethod(offset):
                 pass
             else:
@@ -916,4 +917,3 @@ class CardPaymentsService(object):
                                     response["verifications"][count],
                                     CardPayments.Verification.Verification))
                 return (verification_list)
-

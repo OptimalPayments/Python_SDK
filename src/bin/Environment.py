@@ -4,9 +4,9 @@ Created on 30-Jan-2015
 @author: Asawari.Vaidya
 '''
 
+import certifi
 from urllib3.connectionpool import HTTPSConnectionPool
 from urllib3.util.timeout import Timeout
-import certifi
 
 
 class Environment:

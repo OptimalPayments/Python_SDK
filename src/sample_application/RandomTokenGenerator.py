@@ -7,6 +7,7 @@ Created on 23-Feb-2015
 import random
 import string
 
+
 class RandomTokenGenerator(object):
     '''
     classdocs
@@ -18,5 +19,9 @@ class RandomTokenGenerator(object):
         '''
         
     def generateToken(self):
-        token = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(16))
+        token = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(16))  # @UnusedVariable
         return (token)
+        
+    def generateNumber(self):
+        number = random.randint(1111,9999999999)
+        return (number)

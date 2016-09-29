@@ -4,15 +4,19 @@ Created on 1-Apr-2015
 
 @author: Asawari.Vaidya
 '''
-import cgitb
-cgitb.enable()
 import cgi
-from PythonNetBanxSDK.OptimalApiClient import OptimalApiClient
-from PythonNetBanxSDK.CustomerVault.Profile import Profile
+import cgitb
+
 from PythonNetBanxSDK.CustomerVault.Card import Card
+from PythonNetBanxSDK.CustomerVault.Profile import Profile
+from PythonNetBanxSDK.OptimalApiClient import OptimalApiClient
 from PythonNetBanxSDK.common.CardExpiry import CardExpiry
-from RandomTokenGenerator import RandomTokenGenerator
+
 from Config import Config
+
+
+cgitb.enable()
+
 
 form = cgi.FieldStorage()
 profile_id = form.getvalue('profileId')

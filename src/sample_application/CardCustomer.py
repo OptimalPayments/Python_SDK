@@ -4,15 +4,18 @@ Created on 1-Apr-2015
 
 @author: Asawari.Vaidya
 '''
-import cgitb
-cgitb.enable()
 import cgi
-from PythonNetBanxSDK.OptimalApiClient import OptimalApiClient
+import cgitb
+
 from PythonNetBanxSDK.CardPayments.Authorization import Authorization
 from PythonNetBanxSDK.CardPayments.Card import Card
-from PythonNetBanxSDK.CardPayments.CardExpiry import CardExpiry
-from RandomTokenGenerator import RandomTokenGenerator
+from PythonNetBanxSDK.OptimalApiClient import OptimalApiClient
+
 from Config import Config
+from RandomTokenGenerator import RandomTokenGenerator
+
+
+cgitb.enable()
 
 form = cgi.FieldStorage()
 payment_token = form.getvalue('paymentToken')

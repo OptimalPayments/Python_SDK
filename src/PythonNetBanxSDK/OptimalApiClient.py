@@ -5,23 +5,30 @@ Created on 30-Jan-2015
 '''
 import json
 import urllib.error
-import urllib3.util
-import urllib3.exceptions
-from bin.Environment import Environment
-from PythonNetBanxSDK.CustomerVault.CustomerVaultService import \
-                                    CustomerVaultService
+
 from PythonNetBanxSDK.CardPayments.CardPaymentsService import \
                                     CardPaymentsService
+from PythonNetBanxSDK.CustomerVault.CustomerVaultService import \
+                                    CustomerVaultService
+from PythonNetBanxSDK.DirectDebit.DirectDebitService import \
+                                    DirectDebitService
 from PythonNetBanxSDK.HostedPayment.HostedPaymentService import \
                                     HostedPaymentService
+from PythonNetBanxSDK.ThreeDSecure.ThreeDSecureService import \
+                                    ThreeDSecureService
 from PythonNetBanxSDK.common.DomainObject import DomainObject
 from PythonNetBanxSDK.common.Error import Error
+from bin.Environment import Environment
+import urllib3.exceptions
+import urllib3.util
 
 
 # Global variables to create class objects
 customer_vault_obj = None
 hosted_payment_obj = None
 card_payment_obj = None
+direct_debit_obj = None
+three_d_secure_obj = None
 
 
 class OptimalApiClient(object):
@@ -43,10 +50,11 @@ class OptimalApiClient(object):
         self._api_password = api_password
         self._environment = Environment._get_env(env)
         self._account_number = account_number
+
         
     def _update_env(self, host_url, max_connections, connection_timeout, read_timeout):
         self._environment = Environment(host_url, max_connections, True, connection_timeout, read_timeout)
-		
+        
     '''
     CustomerVaultServiceHandler
     '''    
@@ -82,7 +90,28 @@ class OptimalApiClient(object):
             
         return (card_payment_obj)
     
-    
+    '''
+    DirectDebitServiceHandler
+    '''
+    def direct_debit_service_handler(self):
+        #Instance of class DirectDebitService
+        global direct_debit_obj
+        if direct_debit_obj is None:
+            direct_debit_obj = DirectDebitService(self)
+        
+        return (direct_debit_obj)
+
+    '''
+    ThreeDSecureServiceHandler
+    '''
+    def three_d_secure_service_handler(self):
+        #Instance of class ThreeDSecureService
+        global three_d_secure_obj
+        if three_d_secure_obj is None:
+            three_d_secure_obj = ThreeDSecureService(self)
+        
+        return (three_d_secure_obj)
+        
     '''
     Authorization Handler for API
     @return: Authentication object
@@ -104,11 +133,22 @@ class OptimalApiClient(object):
                 if(type(obj.__dict__[key]) is list):
                     content = []
                     for count in range(0, obj.__dict__[key].__len__()):
-                        content.append(
-                                self.to_dictionary(obj.__dict__[key][count]))
+                        if isinstance(obj.__dict__[key][count], DomainObject):
+                            content.append(obj.__dict__[key][count].__dict__)
+                        else:
+                            content.append(self.to_dictionary(obj.__dict__[key][count]))
                     obj_dict[key] = content
                 elif(isinstance(obj.__dict__[key], DomainObject)):
-                    obj_dict[key] = self.to_dictionary(obj.__dict__[key])
+                    if isinstance(obj.__dict__[key], list):
+                        content = []
+                        for count in range(0, obj.__dict__[key].__len__()):
+                            if isinstance(obj.__dict__[key][count], DomainObject):
+                                content.append(obj.__dict__[key][count].__dict__)
+                            else:
+                                content.append(self.to_dictionary(obj.__dict__[key][count]))
+                        obj_dict[key] = content    
+                    else:        
+                        obj_dict[key] = self.to_dictionary(obj.__dict__[key])
                 else:
                     obj_dict[key] = obj.__dict__[key]
             except KeyError:
@@ -123,7 +163,9 @@ class OptimalApiClient(object):
     @return: Serialized data
     '''
     def serialize(self, obj):
-        return (json.dumps(self.to_dictionary(obj)))
+        str_serialize = json.dumps(self.to_dictionary(obj))
+        # print ("\nserialize======>\n", str_serialize)
+        return (str_serialize)
 
     '''
     De-Serializing object
@@ -135,7 +177,9 @@ class OptimalApiClient(object):
             encoding = "utf-8"
         jsonStr = obj.decode(encoding)
         if jsonStr:
-            return (json.loads(obj.decode(encoding)))
+            str_deserialize = json.loads(obj.decode(encoding))
+            # print ("\nde-serialize=======>\n", str_deserialize)
+            return (str_deserialize)
         else:
             return ("")
     
@@ -162,11 +206,13 @@ class OptimalApiClient(object):
             self._environment._pool.headers.update(self._HEADERS)
             self._environment._pool.headers.update(self.authorization_header())
             # Request Data is None (i.e. Not Required)
+
             if data is None:
                 response = self._environment._pool.urlopen(req_method, url)
             # Request Data is Required
             else:
-                print("Request to server ======= > ", self.serialize(data))
+                # Print Request
+                # print("\nRequest to server ======= > ", self.serialize(data))
                 response = self._environment._pool.urlopen(
                                                     req_method, 
                                                     url, 
@@ -174,25 +220,29 @@ class OptimalApiClient(object):
             # Request: DELETE (for Customer Vault Service only)
             # Response: Response Status Code 200, if Success
             if req_method is 'DELETE' and response.data.__len__() is 0:
-                print("NETBANX Response =====> ", response.status)
+                # Print Response
+                # print("NETBANX Response =====> ", response.status)
                 return (response.status)
             # Request: DELETE (for Hosted Payment and Card Payment Service)
             # Response: Response Object, if Success
             #           Response Error Object, if Failure
             elif req_method is 'DELETE' and response.data.__len__() > 0:
-                print("NETBANX Response =====> ", response.data)
+                # Print Response
+                # print("NETBANX Response =====> ", response.data)
                 return (self.deserialize(response.data,
                                          encoding=self._RESPONSE_ENCODING))
             # Request: GET (for Hosted Payment, Resend an Order Callback API)
             # Response: Response Status Code 200, if Success
             elif req_method is not 'DELETE' and response.data.__len__() is 0:
-                print("NETBANX Response =====> ", response.status)
+                # Print Response
+                # print("NETBANX Response =====> ", response.status)
                 return (response.status)
             # Request: Other Request Methods
             # Response: Response Object, if Success
             #           Response Error Object, if Failure
             else:
-                print("NETBANX Response =====> ", response.data)
+                # Print Response
+                # print("NETBANX Response =====> ", response.data)
                 return (self.deserialize(response.data,
                                          encoding=self._RESPONSE_ENCODING))
         # HTTPError from urllib.error

@@ -5,6 +5,7 @@ Created on 05-Feb-2015
 '''
 from PythonNetBanxSDK.common.DomainObject import DomainObject
 
+
 class CardExpiry(DomainObject):
     '''
     classdocs

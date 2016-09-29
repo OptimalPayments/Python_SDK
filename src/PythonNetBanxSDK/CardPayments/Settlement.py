@@ -4,9 +4,9 @@ Created on 05-Feb-2015
 @author: Asawari.Vaidya
 '''
 from PythonNetBanxSDK import CardPayments
-from PythonNetBanxSDK.common.Link import Link
-from PythonNetBanxSDK.common.Error import Error
 from PythonNetBanxSDK.common.DomainObject import DomainObject
+from PythonNetBanxSDK.common.Error import Error
+from PythonNetBanxSDK.common.Link import Link
 
 
 class Settlement(DomainObject):
